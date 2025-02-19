@@ -1,26 +1,31 @@
-package gobu
+package bytes
 
 import "io"
 
-// BytesReadBuffer is a simple read buffer for bytes.
-type BytesReadBuffer struct {
+// ReadBuffer is a simple read buffer for bytes.
+type ReadBuffer struct {
 	buf  []byte
 	pos  int
 	auto bool
 }
 
-// NewBytesReadBuffer creates a new read buffer with the given byte slice.
-func NewBytesReadBuffer(buf []byte, pos int, auto bool) *BytesReadBuffer {
-	return &BytesReadBuffer{buf: buf, pos: pos, auto: auto}
+// MakeReadBuffer creates a new read buffer with the given byte slice.
+func MakeReadBuffer(buf []byte, pos int, auto bool) ReadBuffer {
+	return ReadBuffer{buf: buf, pos: pos, auto: auto}
+}
+
+// NewReadBuffer creates a new read buffer with the given byte slice.
+func NewReadBuffer(buf []byte, pos int, auto bool) *ReadBuffer {
+	return &ReadBuffer{buf: buf, pos: pos, auto: auto}
 }
 
 // Bytes returns the byte slice of buffer.
-func (self *BytesReadBuffer) Bytes() []byte {
+func (self *ReadBuffer) Bytes() []byte {
 	return self.buf
 }
 
 // Pos returns the current position of buffer (i.e. total bytes read).
-func (self *BytesReadBuffer) Pos() int {
+func (self *ReadBuffer) Pos() int {
 	return self.pos
 }
 
@@ -28,7 +33,7 @@ func (self *BytesReadBuffer) Pos() int {
 // If auto is true and the buffer does not have enough bytes to read, it will read available bytes and return the number of bytes read.
 // If auto is false and the buffer does not have enough bytes to read, it will read available bytes and return the number of bytes read and error.
 // If there is enough bytes to read, it will read len(p) bytes and return the number of bytes read.
-func (self *BytesReadBuffer) Read(p []byte) (int, error) {
+func (self *ReadBuffer) Read(p []byte) (int, error) {
 	n := len(p)
 	l := self.pos + n
 	b := len(self.buf)

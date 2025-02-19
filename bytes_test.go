@@ -3,6 +3,8 @@ package gobu
 import (
 	"io"
 	"testing"
+
+	"github.com/jokruger/gobu/bytes"
 )
 
 func TestBytesBuffer(t *testing.T) {
@@ -18,7 +20,7 @@ func TestBytesBuffer(t *testing.T) {
 
 	t.Run("Fixed writer", func(t *testing.T) {
 		bs := make([]byte, 10)
-		buf := NewBytesWriteBuffer(bs, 0, false)
+		buf := bytes.NewWriteBuffer(bs, 0, false)
 		err := fwrite(buf, []string{"1", "234", "5"})
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -33,7 +35,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = make([]byte, 5)
-		buf = NewBytesWriteBuffer(bs, 0, false)
+		buf = bytes.NewWriteBuffer(bs, 0, false)
 		err = fwrite(buf, []string{"1", "234", "5"})
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -48,7 +50,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = make([]byte, 4)
-		buf = NewBytesWriteBuffer(bs, 0, false)
+		buf = bytes.NewWriteBuffer(bs, 0, false)
 		err = fwrite(buf, []string{"1", "234", "5"})
 		if err == nil {
 			t.Errorf("Expected error")
@@ -63,7 +65,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = make([]byte, 3)
-		buf = NewBytesWriteBuffer(bs, 0, false)
+		buf = bytes.NewWriteBuffer(bs, 0, false)
 		err = fwrite(buf, []string{"1", "234", "5"})
 		if err == nil {
 			t.Errorf("Expected error")
@@ -80,7 +82,7 @@ func TestBytesBuffer(t *testing.T) {
 
 	t.Run("Auto writer", func(t *testing.T) {
 		var bs []byte
-		buf := NewBytesWriteBuffer(bs, 0, true)
+		buf := bytes.NewWriteBuffer(bs, 0, true)
 		err := fwrite(buf, []string{"1", "234", "5"})
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -96,7 +98,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = make([]byte, 10)
-		buf = NewBytesWriteBuffer(bs, 0, true)
+		buf = bytes.NewWriteBuffer(bs, 0, true)
 		err = fwrite(buf, []string{"1", "234", "5"})
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -111,7 +113,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = make([]byte, 5)
-		buf = NewBytesWriteBuffer(bs, 0, true)
+		buf = bytes.NewWriteBuffer(bs, 0, true)
 		err = fwrite(buf, []string{"1", "234", "5"})
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -126,7 +128,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = make([]byte, 4)
-		buf = NewBytesWriteBuffer(bs, 0, true)
+		buf = bytes.NewWriteBuffer(bs, 0, true)
 		err = fwrite(buf, []string{"1", "234", "5"})
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -142,7 +144,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = make([]byte, 3)
-		buf = NewBytesWriteBuffer(bs, 0, true)
+		buf = bytes.NewWriteBuffer(bs, 0, true)
 		err = fwrite(buf, []string{"1", "234", "5"})
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -169,7 +171,7 @@ func TestBytesBuffer(t *testing.T) {
 
 	t.Run("Fixed reader", func(t *testing.T) {
 		bs := []byte("12345")
-		buf := NewBytesReadBuffer(bs, 0, false)
+		buf := bytes.NewReadBuffer(bs, 0, false)
 		s, err := fread(buf, 5)
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -182,14 +184,14 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = []byte("12345")
-		buf = NewBytesReadBuffer(bs, 0, false)
+		buf = bytes.NewReadBuffer(bs, 0, false)
 		s, err = fread(buf, 10)
 		if err == nil {
 			t.Errorf("Expected error")
 		}
 
 		bs = []byte("12345")
-		buf = NewBytesReadBuffer(bs, 0, false)
+		buf = bytes.NewReadBuffer(bs, 0, false)
 		s, err = fread(buf, 1)
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
@@ -217,7 +219,7 @@ func TestBytesBuffer(t *testing.T) {
 		}
 
 		bs = []byte("12345")
-		buf = NewBytesReadBuffer(bs, 0, false)
+		buf = bytes.NewReadBuffer(bs, 0, false)
 		s, err = fread(buf, 3)
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)

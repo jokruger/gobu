@@ -1,26 +1,31 @@
-package gobu
+package bytes
 
 import "io"
 
-// BytesWriteBuffer is a simple write buffer for bytes.
-type BytesWriteBuffer struct {
+// WriteBuffer is a simple write buffer for bytes.
+type WriteBuffer struct {
 	buf  []byte
 	pos  int
 	auto bool
 }
 
-// NewBytesWriteBuffer creates a new write buffer with the given byte slice.
-func NewBytesWriteBuffer(buf []byte, pos int, auto bool) *BytesWriteBuffer {
-	return &BytesWriteBuffer{buf: buf, pos: pos, auto: auto}
+// MakeWriteBuffer creates a new write buffer with the given byte slice.
+func MakeWriteBuffer(buf []byte, pos int, auto bool) WriteBuffer {
+	return WriteBuffer{buf: buf, pos: pos, auto: auto}
+}
+
+// NewWriteBuffer creates a new write buffer with the given byte slice.
+func NewWriteBuffer(buf []byte, pos int, auto bool) *WriteBuffer {
+	return &WriteBuffer{buf: buf, pos: pos, auto: auto}
 }
 
 // Bytes returns the byte slice of buffer.
-func (self *BytesWriteBuffer) Bytes() []byte {
+func (self *WriteBuffer) Bytes() []byte {
 	return self.buf
 }
 
 // Pos returns the current position of buffer (i.e. total bytes written).
-func (self *BytesWriteBuffer) Pos() int {
+func (self *WriteBuffer) Pos() int {
 	return self.pos
 }
 
@@ -28,7 +33,7 @@ func (self *BytesWriteBuffer) Pos() int {
 // If auto is true and the buffer does not have enough space to write, it will resize the buffer and write p to buffer.
 // If auto is false and the buffer does not have enough space to write, it will write available space and return the number of bytes written and error.
 // If there is enough space to write, it will write len(p) bytes and return the number of bytes written.
-func (self *BytesWriteBuffer) Write(p []byte) (int, error) {
+func (self *WriteBuffer) Write(p []byte) (int, error) {
 	n := len(p)
 	l := self.pos + n
 	b := len(self.buf)

@@ -28,7 +28,7 @@ func (m MyStruct) AppendBinary(buf []byte) ([]byte, error) {
 }
 
 func (m MyStruct) MarshalBinary() ([]byte, error) {
-	return self.AppendBinary(nil)
+	return m.AppendBinary(nil)
 }
 
 func (m MyStruct) GobEncode() ([]byte, error) {

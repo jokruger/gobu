@@ -23,7 +23,7 @@ func (m MyStruct) WriteBinary(w io.Writer) error { /* your implementation here *
 
 func (m MyStruct) AppendBinary(buf []byte) ([]byte, error) {
 	b := bytes.NewWriteBuffer(buf, len(buf), true)
-	err := self.WriteBinary(b)
+	err := m.WriteBinary(b)
 	return b.Bytes(), err
 }
 

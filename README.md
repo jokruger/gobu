@@ -13,7 +13,7 @@ The standard library `bytes.Buffer` is a great tool for working with byte slices
 Binary serialisation / de-serialisation of data structures where the size of the buffer is known in advance. The `bytes.Buffer` is slower because it does a lot of additional work due to its flexibility and generic implementation.
 
 **Use Case 2**
-Custom implementation of the binary encoding/decoding methods where, for compatibility reasons, you need to have a number of popular binary encoding methods like `MarshalBinary`, `GobEncode`, `AppendBinary`, etc.
+Custom implementation of the binary encoding/decoding methods where, for compatibility reasons, you need to have a number of popular binary encoding methods like `MarshalBinary`, `GobEncode`, `AppendBinary`, etc., and you want to avoid code duplication.
 
 ```go
 type MyStruct struct {

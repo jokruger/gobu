@@ -5,27 +5,47 @@ import "io"
 // ReadBuffer is a read buffer for bytes.
 type ReadBuffer struct {
 	buf []byte
-	pos int
+	off int
 }
 
-// NewReadBuffer creates a new read buffer with the given byte slice.
-func NewReadBuffer(buf []byte, pos int) ReadBuffer {
-	return ReadBuffer{buf: buf, pos: pos}
+// NewReadBuffer creates a new read buffer with the given byte slice and offset.
+// The caller should not use buf until the buffer is no longer in use.
+func NewReadBuffer(buf []byte, off int) *ReadBuffer {
+	if buf == nil {
+		panic("nil buffer")
+	}
+	if off < 0 || off > len(buf) {
+		panic("invalid offset")
+	}
+	return &ReadBuffer{buf: buf, off: off}
 }
 
-// NewReadBufferPtr creates a new read buffer with the given byte slice.
-func NewReadBufferPtr(buf []byte, pos int) *ReadBuffer {
-	return &ReadBuffer{buf: buf, pos: pos}
-}
-
-// Bytes returns the byte slice of buffer.
-func (rb *ReadBuffer) Bytes() []byte {
+// Buffer returns the underlying byte slice.
+// The caller should not use the returned slice until the buffer is no longer in use.
+func (rb *ReadBuffer) Buffer() []byte {
 	return rb.buf
 }
 
-// Pos returns the current position of buffer.
-func (rb *ReadBuffer) Pos() int {
-	return rb.pos
+// Processed returns the processed byte slice.
+// The caller should not use the returned slice until the buffer is no longer in use.
+func (rb *ReadBuffer) Processed() []byte {
+	return rb.buf[:rb.off]
+}
+
+// Remaining returns the remaining byte slice.
+// The caller should not use the returned slice until the buffer is no longer in use.
+func (rb *ReadBuffer) Remaining() []byte {
+	return rb.buf[rb.off:]
+}
+
+// Offset returns the current position in buffer.
+func (rb *ReadBuffer) Offset() int {
+	return rb.off
+}
+
+// Reset resets the buffer offset to zero.
+func (rb *ReadBuffer) Reset() {
+	rb.off = 0
 }
 
 // Read reads up to len(p) bytes from buffer into p.
@@ -33,18 +53,18 @@ func (rb *ReadBuffer) Pos() int {
 // If there is enough bytes to read, it will read len(p) bytes and return the number of bytes read.
 func (rb *ReadBuffer) Read(p []byte) (int, error) {
 	n := len(p)
-	l := rb.pos + n
+	l := rb.off + n
 	if l <= len(rb.buf) {
-		copy(p, rb.buf[rb.pos:l])
-		rb.pos += n
+		copy(p, rb.buf[rb.off:l])
+		rb.off += n
 		return n, nil
 	}
 
-	if rb.pos < len(rb.buf) {
-		n = copy(p, rb.buf[rb.pos:])
-		rb.pos += n
-		return n, io.ErrShortBuffer
+	if rb.off < len(rb.buf) {
+		n = copy(p, rb.buf[rb.off:])
+		rb.off += n
+		return n, io.EOF
 	}
 
-	return 0, io.ErrShortBuffer
+	return 0, io.EOF
 }

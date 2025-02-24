@@ -8,12 +8,12 @@ import (
 
 func TestStaticWriteBuffer(t *testing.T) {
 	bs := make([]byte, 10)
-	buf := gobu.NewStaticWriteBufferPtr(bs, 0)
+	buf := gobu.NewStaticWriteBuffer(bs, 0)
 	err := fwrite(buf, []string{"1", "234", "5"})
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	written := buf.Pos()
+	written := buf.Offset()
 	if written != 5 {
 		t.Errorf("Unexpected written bytes: %d", written)
 	}
@@ -23,12 +23,12 @@ func TestStaticWriteBuffer(t *testing.T) {
 	}
 
 	bs = make([]byte, 5)
-	buf = gobu.NewStaticWriteBufferPtr(bs, 0)
+	buf = gobu.NewStaticWriteBuffer(bs, 0)
 	err = fwrite(buf, []string{"1", "234", "5"})
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	written = buf.Pos()
+	written = buf.Offset()
 	if written != 5 {
 		t.Errorf("Unexpected written bytes: %d", written)
 	}
@@ -38,12 +38,12 @@ func TestStaticWriteBuffer(t *testing.T) {
 	}
 
 	bs = make([]byte, 4)
-	buf = gobu.NewStaticWriteBufferPtr(bs, 0)
+	buf = gobu.NewStaticWriteBuffer(bs, 0)
 	err = fwrite(buf, []string{"1", "234", "5"})
 	if err == nil {
 		t.Errorf("Expected error")
 	}
-	written = buf.Pos()
+	written = buf.Offset()
 	if written != 4 {
 		t.Errorf("Unexpected written bytes: %d", written)
 	}
@@ -53,12 +53,12 @@ func TestStaticWriteBuffer(t *testing.T) {
 	}
 
 	bs = make([]byte, 3)
-	buf = gobu.NewStaticWriteBufferPtr(bs, 0)
+	buf = gobu.NewStaticWriteBuffer(bs, 0)
 	err = fwrite(buf, []string{"1", "234", "5"})
 	if err == nil {
 		t.Errorf("Expected error")
 	}
-	written = buf.Pos()
+	written = buf.Offset()
 	if written != 3 {
 		t.Errorf("Unexpected written bytes: %d", written)
 	}

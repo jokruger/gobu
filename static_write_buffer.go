@@ -5,27 +5,47 @@ import "io"
 // StaticWriteBuffer is a static write buffer.
 type StaticWriteBuffer struct {
 	buf []byte
-	pos int
+	off int
 }
 
-// NewStaticWriteBuffer creates a new static write buffer with the given byte slice.
-func NewStaticWriteBuffer(buf []byte, pos int) StaticWriteBuffer {
-	return StaticWriteBuffer{buf: buf, pos: pos}
+// NewStaticWriteBuffer creates a new static write buffer with the given byte slice and offset.
+// The caller should not use buf until the buffer is no longer in use.
+func NewStaticWriteBuffer(buf []byte, off int) *StaticWriteBuffer {
+	if buf == nil {
+		panic("nil buffer")
+	}
+	if off < 0 || off > len(buf) {
+		panic("invalid offset")
+	}
+	return &StaticWriteBuffer{buf: buf, off: off}
 }
 
-// NewStaticWriteBufferPtr creates a new static write buffer with the given byte slice.
-func NewStaticWriteBufferPtr(buf []byte, pos int) *StaticWriteBuffer {
-	return &StaticWriteBuffer{buf: buf, pos: pos}
+// Buffer returns the underlying byte slice.
+// The caller should not use the returned slice until the buffer is no longer in use.
+func (rb *StaticWriteBuffer) Buffer() []byte {
+	return rb.buf
 }
 
-// Bytes returns the byte slice of buffer.
-func (wb *StaticWriteBuffer) Bytes() []byte {
-	return wb.buf
+// Processed returns the processed byte slice.
+// The caller should not use the returned slice until the buffer is no longer in use.
+func (rb *StaticWriteBuffer) Processed() []byte {
+	return rb.buf[:rb.off]
 }
 
-// Pos returns the current position of buffer.
-func (wb *StaticWriteBuffer) Pos() int {
-	return wb.pos
+// Remaining returns the remaining byte slice.
+// The caller should not use the returned slice until the buffer is no longer in use.
+func (rb *StaticWriteBuffer) Remaining() []byte {
+	return rb.buf[rb.off:]
+}
+
+// Offset returns the current position in buffer.
+func (rb *StaticWriteBuffer) Offset() int {
+	return rb.off
+}
+
+// Reset resets the buffer offset to zero.
+func (wb *StaticWriteBuffer) Reset() {
+	wb.off = 0
 }
 
 // Write writes up to len(p) bytes from p to buffer.
@@ -34,15 +54,15 @@ func (wb *StaticWriteBuffer) Pos() int {
 func (wb *StaticWriteBuffer) Write(p []byte) (int, error) {
 	n := len(p)
 	b := len(wb.buf)
-	if wb.pos+n <= b {
-		copy(wb.buf[wb.pos:], p)
-		wb.pos += n
+	if wb.off+n <= b {
+		copy(wb.buf[wb.off:], p)
+		wb.off += n
 		return n, nil
 	}
 
-	if wb.pos < b {
-		i := copy(wb.buf[wb.pos:], p[:b-wb.pos])
-		wb.pos += i
+	if wb.off < b {
+		i := copy(wb.buf[wb.off:], p[:b-wb.off])
+		wb.off += i
 		return i, io.ErrShortWrite
 	}
 
